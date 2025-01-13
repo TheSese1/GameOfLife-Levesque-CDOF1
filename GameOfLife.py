@@ -44,7 +44,7 @@ class Game_of_life:
             print("Unable to clear terminal. Your operating system is not supported.\n\r")
     
     def print_game(self):
-        dic = {0:' ', 1:'#'}
+        dic = {0:' ', 1:'█'}
         for l in self.grid:
             for ele in l:
                 print(dic[ele], end='')
@@ -87,20 +87,35 @@ class Game_of_life:
         
         self.grid = next_grid_
         return next_grid_
+    
+    def count_alive(self):
+        """
+        Counts the number of alive cells in a
+        """
+        counter = 0
+        for l in self.grid:
+            for i in l:
+                if i==1:
+                    counter += 1
+        return counter
 
 #%% Run game
 
 def run_game(size:int, generations:int):
     # Initialization
     game = Game_of_life(size)
+    print("Generation : 0")
+    print(game.count_alive(), " alive cells")
     game.print_game()
     current_state = game.grid
     
     # Run Game of Life sequence
     for gen in range(1, generations + 1):
         print("Generation :", gen)
+        # next state
         next_state = game.next_grid()
         # printing grid
+        print(game.count_alive(), " alive cells")
         game.print_game()
         # verif change
         if next_state == current_state:
