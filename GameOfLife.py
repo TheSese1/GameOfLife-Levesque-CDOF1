@@ -119,7 +119,7 @@ def run_game(seed:[list] or None):
     time.sleep(0.5)
     
     # Run Game of Life sequence
-    for gen in range(1, generations + 1):
+    for gen in range(1, generation + 1):
         print("Generation :", gen)
         # next state
         next_state = game.next_grid()
