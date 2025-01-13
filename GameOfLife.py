@@ -25,6 +25,7 @@ import time
 class Game_of_life:
     def __init__(self, size:int):
         # random generation of a seed : (0=dead, 1=alive)
+        
         self.grid = [[rd.choice([0, 1]) for _ in range(size)] for _ in range(size)]
         self.size = size
     
@@ -101,9 +102,23 @@ class Game_of_life:
 
 #%% Run game
 
-def run_game(size:int, generations:int):
+def run_game():
+    # Generations initialization
+    generation = "None"
+    while not generation.isdigit() or not int(generation)>=1:
+        generation = input("Enter a number of iterations greater than 1.")
+        if not generation.isdigit():
+            print("Invalid input. Please enter a valid integer.")
+    # Size intitialisation
+    size = "None"
+    while not size.isdigit() or not int(size)>=2:
+        size = input("Enter a number of iterations greater than 2.")
+        if not generation.isdigit():
+            print("Invalid input. Please enter a valid integer.")
     # Initialization
-    game = Game_of_life(size)
+    generation = int(generation)
+    size = int(size)
+    game = Game_of_life(size, )
     print("Generation : 0")
     print(game.count_alive(), " alive cells")
     game.print_game()
@@ -123,4 +138,4 @@ def run_game(size:int, generations:int):
     
         time.sleep(1 / 5.0)
 
-run_game(10, 10)
+run_game()
