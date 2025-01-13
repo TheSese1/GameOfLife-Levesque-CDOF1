@@ -111,7 +111,7 @@ def run_game(seed:[list] or None):
     # Initialization
     generation = int(generation)
     size = int(size)
-    game = Game_of_life(size, )
+    game = Game_of_life(size, seed)
     print("Generation : 0")
     print(game.count_alive(), " alive cells")
     game.print_game()
@@ -131,7 +131,7 @@ def run_game(seed:[list] or None):
             break
 
         current_state = next_state
-        time.sleep(1 / 5.0)
+        time.sleep(0.5)
 
 # Random seed
 run_game(None)
