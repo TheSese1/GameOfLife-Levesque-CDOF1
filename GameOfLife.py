@@ -23,26 +23,15 @@ import time
 #%% Implementation
 
 class Game_of_life:
-    def __init__(self, size:int):
-        # random generation of a seed : (0=dead, 1=alive)
-        
-        self.grid = [[rd.choice([0, 1]) for _ in range(size)] for _ in range(size)]
-        self.size = size
-    
-    def clear_console():
-        """
-        Clears the console using a system command based on the user's operating system.
-    
-        """
-    
-        if sys.platform.startswith('win'):
-            os.system("cls")
-        elif sys.platform.startswith('linux'):
-            os.system("clear")
-        elif sys.platform.startswith('darwin'):
-            os.system("clear")
-        else:
-            print("Unable to clear terminal. Your operating system is not supported.\n\r")
+    def __init__(self, size=10, seed=None):
+        if seed != None:
+            # given squared seed: (0=dead, 1=alive)
+            self.grid = seed
+            self.size = len(seed)
+        else: 
+            # random generation of a seed based on the size: (0=dead, 1=alive)
+            self.grid = [[rd.choice([0, 1]) for _ in range(size)] for _ in range(size)]
+            self.size = size
     
     def print_game(self):
         dic = {0:' ', 1:'█'}
@@ -63,7 +52,6 @@ class Game_of_life:
                     life_sum += self.grid[((row + i) % self.size)][((col + j) % self.size)]
         return life_sum
 
-    
     def next_grid(self):
         """
         Analyzes the current generation of the Game of Life grid and determines what cells live and die in the next
@@ -102,19 +90,24 @@ class Game_of_life:
 
 #%% Run game
 
-def run_game():
+def run_game(seed:[list] or None):
     # Generations initialization
     generation = "None"
     while not generation.isdigit() or not int(generation)>=1:
         generation = input("Enter a number of iterations greater than 1.")
         if not generation.isdigit():
             print("Invalid input. Please enter a valid integer.")
-    # Size intitialisation
-    size = "None"
-    while not size.isdigit() or not int(size)>=2:
-        size = input("Enter a number of iterations greater than 2.")
-        if not generation.isdigit():
-            print("Invalid input. Please enter a valid integer.")
+    
+    # Size initialisation (only if random seed)
+    if seed == None:
+        size = "None"
+        while not size.isdigit() or not int(size)>=2:
+            size = input("Enter a size greater than 2.")
+            if not generation.isdigit():
+                print("Invalid input. Please enter a valid integer.")
+    else:
+        size = 10#random, not interesting
+    
     # Initialization
     generation = int(generation)
     size = int(size)
@@ -123,6 +116,7 @@ def run_game():
     print(game.count_alive(), " alive cells")
     game.print_game()
     current_state = game.grid
+    time.sleep(0.5)
     
     # Run Game of Life sequence
     for gen in range(1, generations + 1):
@@ -135,7 +129,27 @@ def run_game():
         # verif change
         if next_state == current_state:
             break
-    
+
+        current_state = next_state
         time.sleep(1 / 5.0)
 
-run_game()
+# Random seed
+run_game(None)
+
+# Given seed, with 1 blincker
+seed = [[0, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0]]
+run_game(seed)
+
+# Given seed, with 1 spaceship
+seed = [[0, 1, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0],
+        [1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0]]
+run_game(seed)
