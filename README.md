@@ -6,10 +6,7 @@ Simple python implementation of the famous game by mathematician John Horton Con
 ### Prerequisites
 Dependencies (basic python libraries)
 ```
- - Numpy, latest version
  - Random
- - Os
- - Sys
  - Time
 ```
 
@@ -45,7 +42,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## "The Game of Life" : A simple yet profound simulation
 
-The Game of Life, described by mathematician John Horton Conway in 1970, is a cellular automaton that simulates the evolution of patterns on a two-dimensional grid based on simple rules. Each cell in the grid can be in one of two states: alive or dead. The state of each cell in the next generation is determined by the states of its eight neighboring cells, following these rules:
+The Game of Life, described by mathematician John Horton Conway in 1970, is a cellular automaton that simulates the evolution of patterns on a two-dimensional grid based on simple rules. Each cell in the grid can be in one of two states: alive or dead. At each generation the number of living cells and average lifetime of a cell is displayed. The state of each cell in the next generation is determined by the states of its eight neighboring cells, following these rules:
 
     Underpopulation: A living cell with fewer than two living neighbors dies.
     Survival: A living cell with two or three living neighbors continues to live.
