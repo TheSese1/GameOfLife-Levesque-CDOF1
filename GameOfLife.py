@@ -14,10 +14,7 @@ Created on Mon Jan 13 14:09:06 2025
 # you can use spaces for dead cells and # for live cells.
 
 #%% Imports
-import numpy as np
 import random as rd
-import os
-import sys
 import time
 
 #%% Implementation
