@@ -125,15 +125,22 @@ def run_game(seed=None):
     print(f"{game.count_alive()} alive cells")
     print(f"Average lifetime: {game.average_lifetime():.2f}")
     game.print_game()
+    current_state = game.grid
     time.sleep(0.5)
 
     # Run the Game of Life sequence
     for gen in range(1, generation + 1):
         print(f"\nGeneration : {gen}")
-        game.next_grid()
+        # Next state
+        next_state = game.next_grid()
         print(f"{game.count_alive()} alive cells")
         print(f"Average lifetime: {game.average_lifetime():.2f}")
         game.print_game()
+        # verif change
+        if next_state == current_state:
+            break
+
+        current_state = next_state
         time.sleep(0.5)
 
 
