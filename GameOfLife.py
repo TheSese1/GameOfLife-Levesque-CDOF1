@@ -5,13 +5,12 @@ Created on Mon Jan 13 14:09:06 2025
 @author: Sebastien
 """
 
-
 #%% Introduction
 
-# Game of Life implementation :
-# The famous game by mathematician John Horton Conway. 
-# To make it console based, 
-# you can use spaces for dead cells and # for live cells.
+# Game of Life implementation:
+# The famous game by mathematician John Horton Conway.
+# To make it console based,
+# you can use spaces for dead cells and █ for live cells.
 
 #%% Imports
 import numpy as np
@@ -24,21 +23,22 @@ import time
 
 class Game_of_life:
     def __init__(self, size=10, seed=None):
-        if seed != None:
-            # given squared seed: (0=dead, 1=alive)
+        if seed is not None:
+            # Given squared seed: (0=dead, 1=alive)
             self.grid = seed
             self.size = len(seed)
-        else: 
-            # random generation of a seed based on the size: (0=dead, 1=alive)
+        else:
+            # Random generation of a seed based on the size: (0=dead, 1=alive)
             self.grid = [[rd.choice([0, 1]) for _ in range(size)] for _ in range(size)]
             self.size = size
+        
+        # Variable pour suivre la durée de vie des cellules
+        self.cell_lifetimes = [[0 for _ in range(self.size)] for _ in range(self.size)]
     
     def print_game(self):
-        dic = {0:' ', 1:'█'}
-        for l in self.grid:
-            for ele in l:
-                print(dic[ele], end='')
-            print()
+        dic = {0: ' ', 1: '█'}
+        for row in self.grid:
+            print("".join(dic[cell] for cell in row))
     
     def get_live_neighbors(self, row, col):
         """
@@ -47,96 +47,105 @@ class Game_of_life:
         life_sum = 0
         for i in range(-1, 2):
             for j in range(-1, 2):
-                if not (i == 0 and j == 0):
-                    # Using the modulo operator (%) the grid wraps around
-                    life_sum += self.grid[((row + i) % self.size)][((col + j) % self.size)]
+                if not (i == 0 and j == 0):  # Ignore the current cell
+                    life_sum += self.grid[(row + i) % self.size][(col + j) % self.size]
         return life_sum
 
     def next_grid(self):
         """
-        Analyzes the current generation of the Game of Life grid and determines what cells live and die in the next
-        generation of the Game of Life grid.
+        Analyzes the current generation and determines the next state of the grid.
         """
-        next_grid_ = [[' ' for _ in range(self.size)] for _ in range(self.size)]
+        next_grid_ = [[0 for _ in range(self.size)] for _ in range(self.size)]
         for row in range(self.size):
             for col in range(self.size):
-                # Get the number of live cells adjacent to the cell at grid[row][col]
                 live_neighbors = self.get_live_neighbors(row, col)
-    
-                # If the number of surrounding live cells is < 2 or > 3 then we make the cell at grid[row][col] a dead cell
                 if live_neighbors < 2 or live_neighbors > 3:
-                    next_grid_[row][col] = 0
-                # If the number of surrounding live cells is 3 and the cell at grid[row][col] was previously dead then make
-                # the cell into a live cell
-                elif live_neighbors == 3 and self.grid[row][col] == 0:
-                    next_grid_[row][col] = 1
-                # If the number of surrounding live cells is 3 and the cell at grid[row][col] is alive keep it alive
+                    next_grid_[row][col] = 0  # Cell dies
+                elif live_neighbors == 3:
+                    next_grid_[row][col] = 1  # Cell becomes alive
                 else:
-                    next_grid_[row][col] = self.grid[row][col]
+                    next_grid_[row][col] = self.grid[row][col]  # Cell state unchanged
         
+        # Update cell lifetimes
+        self.update_lifetimes(next_grid_)
         self.grid = next_grid_
         return next_grid_
-    
+
+    def update_lifetimes(self, next_grid_):
+        """
+        Updates the lifetime of cells.
+        """
+        for row in range(self.size):
+            for col in range(self.size):
+                if next_grid_[row][col] == 1:
+                    self.cell_lifetimes[row][col] += 1
+                else:
+                    self.cell_lifetimes[row][col] = 0
+
     def count_alive(self):
         """
-        Counts the number of alive cells in a
+        Counts the number of alive cells in the grid.
         """
-        counter = 0
-        for l in self.grid:
-            for i in l:
-                if i==1:
-                    counter += 1
-        return counter
+        return sum(sum(row) for row in self.grid)
+
+    def average_lifetime(self):
+        """
+        Calculates the average lifetime of living cells.
+        """
+        live_cells = [self.cell_lifetimes[row][col]
+                      for row in range(self.size)
+                      for col in range(self.size)
+                      if self.grid[row][col] == 1]
+        return sum(live_cells) / len(live_cells) if live_cells else 0
+
 
 #%% Run game
 
-def run_game(seed:[list] or None):
+def run_game(seed=None):
     # Generations initialization
     generation = "None"
-    while not generation.isdigit() or not int(generation)>=1:
-        generation = input("Enter a number of iterations greater than 1.")
+    while not generation.isdigit() or int(generation) < 1:
+        generation = input("Enter a number of iterations greater than 1: ")
         if not generation.isdigit():
             print("Invalid input. Please enter a valid integer.")
     
-    # Size initialisation (only if random seed)
-    if seed == None:
+    # Size initialization (only if random seed)
+    if seed is None:
         size = "None"
-        while not size.isdigit() or not int(size)>=2:
-            size = input("Enter a size greater than 2.")
-            if not generation.isdigit():
+        while not size.isdigit() or int(size) < 2:
+            size = input("Enter a size greater than 2: ")
+            if not size.isdigit():
                 print("Invalid input. Please enter a valid integer.")
     else:
-        size = 10#random, not interesting
-    
+        size = len(seed)
+
     # Initialization
     generation = int(generation)
     size = int(size)
     game = Game_of_life(size, seed)
-    print("Generation : 0")
-    print(game.count_alive(), " alive cells")
-    game.print_game()
-    current_state = game.grid
-    time.sleep(0.5)
     
-    # Run Game of Life sequence
-    for gen in range(1, generation + 1):
-        print("Generation :", gen)
-        # next state
-        next_state = game.next_grid()
-        # printing grid
-        print(game.count_alive(), " alive cells")
-        game.print_game()
-        # verif change
-        if next_state == current_state:
-            break
+    print("Generation : 0")
+    print(f"{game.count_alive()} alive cells")
+    print(f"Average lifetime: {game.average_lifetime():.2f}")
+    game.print_game()
+    time.sleep(0.5)
 
-        current_state = next_state
+    # Run the Game of Life sequence
+    for gen in range(1, generation + 1):
+        print(f"\nGeneration : {gen}")
+        game.next_grid()
+        print(f"{game.count_alive()} alive cells")
+        print(f"Average lifetime: {game.average_lifetime():.2f}")
+        game.print_game()
         time.sleep(0.5)
+
+
+#%% Examples
 
 # Random seed
 run_game(None)
 
-# Given seed, with 1 blincker
+# Given seed, with 1 blinker
 seed = [[0, 0, 0, 0],
         [0, 1, 0, 0],
         [0, 1, 0, 0],
